@@ -35,41 +35,35 @@ function showTask(tasks) {
         </li>`;
   });
   ul.innerHTML = html;
-  var activeTasks = filterActiveTasks(tasks);
+  var activeTasks = allTasks.filter((task) => {
+    return task.completed == false;
+  });
   document.getElementById("item-count").innerHTML =
     activeTasks.length + " items left";
 
   let checkbtn = document.getElementById("check");
   checkbtn.innerText = activeTasks.length ? 'Check All' : "UnCheckAll";
   localStorage.setItem("tasks", JSON.stringify(allTasks));
-
 }
 
-function filterActiveTasks(tasks) {
-  tasks.filter((task) => {
-    return task.completed == false;
-  })
-}
-
-document.getElementById("check").onclick = () => {
-
-  var activeTasks = filterActiveTasks(allTasks);
-  if (activeTasks.length) {
-    allTasks.forEach((task) => {
-      task.completed = true;
-    })
+function checkState(current){
+  switch (current) {
+    case "complete":
+      showcompletedTask();
+      break;
+    case "active":
+      showActiveTask();
+      break;
+    default:
+      showAllTasks();
   }
-  else {
-    allTasks.forEach((task) => {
-      task.completed = false;
-    })
-  }
-  showTask(allTasks)
 }
 
 function showActiveTask() {
   currentState = "active";
-  var activeTasks = filterActiveTasks(allTasks);
+  var activeTasks = allTasks.filter((task) => {
+    return task.completed == false;
+  });
   showTask(activeTasks);
 }
 
@@ -86,12 +80,29 @@ function showAllTasks() {
   showTask(allTasks);
 }
 
+function toogleCheck(){
+  var activeTasks = allTasks.filter((task) => {
+    return task.completed == false;
+  });
+  if (activeTasks.length) {
+    allTasks.forEach((task) => {
+      task.completed = true;
+    })
+  }
+  else {
+    allTasks.forEach((task) => {
+      task.completed = false;
+    })
+  }
+  checkState(currentState);
+}
+
 function deleteTask(index) {
   var id = allTasks.findIndex((task) => {
     return task.id == index;
   });
   allTasks.splice(id, 1);
-  showTask(allTasks);
+  checkState(currentState);
 }
 
 function completeCheck(el, index) {
@@ -99,21 +110,14 @@ function completeCheck(el, index) {
     return task.id == index;
   })
   task.completed = el.checked;
-  switch (currentState) {
-    case "complete":
-      showcompletedTask();
-      break;
-    case "active":
-      showActiveTask();
-      break;
-    default:
-      showAllTasks();
-  }
+  checkState(currentState);
 }
 
 function clearCompleted() {
-  allTasks = filterActiveTasks(allTasks);
-  showTask(allTasks);
+  allTasks = allTasks.filter((task) => {
+    return task.completed == false;
+  });
+  checkState(currentState);
 }
 
-showTask(allTasks);
+showAllTasks();
