@@ -2,10 +2,13 @@ var allTasks = JSON.parse(localStorage.getItem("tasks")) || [];
 var currentState = "all";
 function addTask() {
   var taskName = document.querySelector("#task-name");
-  allTasks.push({ id: new Date().getTime(), name: taskName.value, completed: false });
-  localStorage.setItem("tasks", JSON.stringify(allTasks));
-  showTask(allTasks);
-  taskName.value = "";
+  if (taskName.value != "")
+  {
+    allTasks.push({ id: new Date().getTime(), name: taskName.value, completed: false });
+    localStorage.setItem("tasks", JSON.stringify(allTasks));
+    showTask(allTasks);
+    taskName.value = "";
+  }
 }
 
 function showTask(tasks) {
